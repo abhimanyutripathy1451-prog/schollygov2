@@ -5,7 +5,6 @@ import re
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import aiomysql
@@ -139,8 +138,6 @@ async def execute(conn,sql,args=()):
 
 async def send_sms(mob,code):
     if os.getenv('DEV_OTP_ENABLED') == 'true':
-        path = Path(os.getenv('DEV_OTP_FILE','./dev-otps.log'))
-        with path.open('a',encoding='utf8') as f: f.write(f'{datetime.now(UTC).isoformat()} {mob} {code}\n')
         return
     import httpx
     async with httpx.AsyncClient(timeout=10) as client:
