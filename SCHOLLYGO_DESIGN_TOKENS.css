@@ -1,0 +1,114 @@
+/* SCHOLLYGO DESIGN TOKENS */
+/* Unified Source of Truth for all frontend applications */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@theme {
+  /* ================== SCHOLLYGO V1 THEME ================== */
+  --color-brand-primary: #FACC15;
+  --color-brand-hover: #FDE047;
+  --color-semantic-success: #22C55E;
+  --color-semantic-error: #EF4444;
+  --color-semantic-info: #38BDF8;
+  --color-semantic-rank: #A855F7;
+  --color-semantic-milestone: #F97316;
+  --color-ambient-blue: var(--color-ambient-blue);
+  --color-ambient-purple: var(--color-ambient-purple);
+  --color-bg-app: var(--bg-app);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-surface-elevated: var(--bg-surface-elevated);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border-subtle: var(--border-subtle);
+  --shadow-premium: var(--shadow-premium);
+  --radius-card: 0.75rem;
+  --radius-input: 0.5rem;
+
+  /* ================== ADMIN / WEB THEME ================== */
+  --color-voltage-yellow: #FBC02D;
+  --color-graphite: #1d222b;
+  --color-deep-space: #0B1120;
+  --color-success-green: #10B981;
+  --color-off-white: #f8fafc;
+  --color-error-red: #EF4444;
+  --color-app-cardBorder: var(--color-app-cardBorder, #2e3545);
+  --color-app-yellow: #FBC02D;
+  --color-app-yellowDark: #ca8a04;
+  --color-app-textDark: var(--color-app-textDark, #64748b);
+  --color-gray-900: #0f172a;
+  --color-gray-800: #2e3545;
+  --color-gray-700: #334155;
+  --color-gray-600: #475569;
+  --color-gray-500: #64748b;
+  --color-gray-400: #94a3b8;
+  --color-gray-300: #cbd5e1;
+
+  /* ================== MARKETING THEME ================== */
+  --color-app-bg: var(--bg-base, #0B1120);
+  --color-app-card: var(--bg-panel, #1d222b);
+  --color-app-cardHover: var(--bg-panel-hover);
+  --color-app-textMain: var(--text-main);
+  --color-app-textMuted: var(--text-muted, #94a3b8);
+  --color-app-accent-bg: var(--bg-accent);
+  --color-app-accent-hover: var(--bg-accent-hover);
+  --shadow-glow-yellow: 0 0 20px -5px rgba(251, 191, 36, 0.4);
+  --background-image-radial-glow: var(--bg-radial-glow-marketing);
+
+  /* Fonts */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  /* DARK THEME (Midnight - Primary Experience) */
+  --bg-app: #080C14;
+  --bg-secondary: #0F1724;
+  --bg-surface: #111827;
+  --bg-surface-elevated: #182131;
+
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+
+  --color-ambient-blue: rgba(56, 189, 248, 0.05);
+  --color-ambient-purple: rgba(168, 85, 247, 0.05);
+  --bg-radial-glow: radial-gradient(circle at 50% 0%, var(--color-ambient-blue) 0%, transparent 60%);
+
+  /* MARKETING SPECIFIC VARS */
+  --bg-base: #0b101a;
+  --bg-panel: #131927;
+  --bg-panel-hover: #1e293b;
+  --bg-accent: #111827;
+  --bg-accent-hover: #1e293b;
+  --border-main: #1e293b;
+  --text-main: #ffffff;
+  --text-dark: #64748b;
+  --bg-radial-glow-marketing: radial-gradient(circle at 50% 0%, rgba(251, 191, 36, 0.08) 0%, transparent 60%);
+
+  /* Hardcoded variations found in codebase (DO NOT USE FOR NEW UI) */
+  --legacy-yellow-hardcoded: #FBC02D;
+  --legacy-yellow-dark-hardcoded: #F59E0B;
+}
+
+.light {
+  /* LIGHT THEME (Secondary Experience) */
+  --bg-app: #F8FAFC;
+  --bg-secondary: #F1F5F9;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #F8FAFC;
+
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+
+  --color-ambient-blue: rgba(56, 189, 248, 0.02);
+  --color-ambient-purple: rgba(168, 85, 247, 0.02);
+  --bg-radial-glow: radial-gradient(circle at 50% 0%, var(--color-ambient-blue) 0%, transparent 60%);
+}
