@@ -33,3 +33,8 @@ The v2 UI keeps its bearer session in localStorage until Log out, PIN reset, acc
 
 
 For local Windows development, run "powershell -ExecutionPolicy Bypass -File .\start.ps1" from the project root to start the backend and frontend together. Port 8001 is used because 8000 is unavailable on this machine.
+
+## Dashboard UI
+
+The authenticated home screen uses the v1 Basecamp dashboard visual layout. It displays the signed-in student and curriculum from the account API. Quest, learning metrics, Scorecard navigation, and subject cards are presentation placeholders until their modules are implemented; no learning API requests or fabricated progress values are used.
+
