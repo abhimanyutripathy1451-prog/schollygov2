@@ -14,7 +14,7 @@ The initializer accepts only `schollygoappv2` or `schollygoappv2_test*` as datab
 
 ## OTP delivery
 
-For local development, copy `.env.example` to `.env` and set real local database credentials and a random `OTP_SECRET`. The example explicitly enables `DEV_OTP_ENABLED=true`. The development OTP is `1234` for signup and recovery. The code is documented for local testing and is never returned by the API. Production startup rejects development mode. The SMS HTTP adapter needs `SMS_API_URL`, `SMS_API_KEY`, and `SMS_SENDER_ID`; its JSON shape must be adjusted to the selected provider before real delivery. No live delivery has been verified.
+For local development, copy `.env.example` to `.env` and set real local database credentials and a random `OTP_SECRET`. The example explicitly enables `DEV_OTP_ENABLED=true`. The development OTP is `1234` for signup and recovery. For signup testing, an issued challenge accepts `1234` even after its normal expiry; it remains bound to the requested mobile and can be verified only once. The code is documented for local testing and is never returned by the API. Production startup rejects development mode. The SMS HTTP adapter needs `SMS_API_URL`, `SMS_API_KEY`, and `SMS_SENDER_ID`; its JSON shape must be adjusted to the selected provider before real delivery. No live delivery has been verified.
 
 ## API
 

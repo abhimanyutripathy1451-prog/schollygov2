@@ -74,3 +74,8 @@ test('curriculum picker shows loading failures and recovers as a native select',
  expect(await picker.evaluate(el=>getComputedStyle(el).appearance)).toBe('none');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 });
+
+test('signup explains an already registered mobile before OTP entry',async({page})=>{
+ await page.route('http://127.0.0.1:8001/**',route=>{const path=new URL(route.request().url()).pathname;if(path==='/curriculums')return route.fulfill({status:200,contentType:'application/json',body:'[{"code":"CBSE_G5","name":"CBSE Grade 5","board":"CBSE","grade":"5","medium":"English"}]'});return route.fulfill({status:409,contentType:'application/json',body:'{"detail":"Mobile number already registered. Sign in or reset your PIN."}'})});
+ await page.goto('/');await page.getByRole('button',{name:'Sign up'}).click();await page.getByLabel('Student name').fill('Student');await page.getByLabel('Curriculum').selectOption('CBSE_G5');await page.getByLabel('Mobile number').fill('9876543210');for(let i=1;i<=4;i++){await page.getByLabel('PIN digit '+i,{exact:true}).fill(i===4?'1':'0');await page.getByLabel('Confirm PIN digit '+i).fill(i===4?'1':'0')}await page.getByRole('button',{name:'Send code'}).click();await expect(page.getByRole('alert')).toContainText('already registered');await expect(page.getByLabel('Verification code')).toHaveCount(0)
+});

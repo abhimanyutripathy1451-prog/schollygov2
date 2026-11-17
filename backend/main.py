@@ -171,13 +171,14 @@ async def curriculums(conn=Depends(db)):
 async def request_otp(payload: MobilePurpose, request: Request, conn=Depends(db)):
     mob,purpose = payload.mobile,payload.purpose; instant=now(); ip=digest(request.client.host if request.client else 'unknown')
     await conn.begin()
+    user=await query(conn,'SELECT id FROM users WHERE mobile_e164=%s',(mob,),True)
+    if purpose=='signup' and user: raise HTTPException(409,'Mobile number already registered. Sign in or reset your PIN.')
     ip_count=(await query(conn,'SELECT COUNT(*) n FROM otp_challenges WHERE request_ip_hash=%s AND created_at>%s',(ip,instant-timedelta(hours=1)),True))['n']
     prior=await query(conn,'SELECT created_at FROM otp_challenges WHERE mobile_e164=%s AND purpose=%s ORDER BY created_at DESC LIMIT 1',(mob,purpose),True)
     mobile_count=(await query(conn,'SELECT COUNT(*) n FROM otp_challenges WHERE mobile_e164=%s AND created_at>%s',(mob,instant-timedelta(hours=1)),True))['n']
     if ip_count>=30 or mobile_count>=5 or prior and prior['created_at']>instant-timedelta(seconds=60):
         await conn.commit(); raise HTTPException(429,'Please wait before requesting another code')
-    user=await query(conn,'SELECT id FROM users WHERE mobile_e164=%s',(mob,),True)
-    if (purpose=='signup' and user) or (purpose=='recovery' and not user):
+    if purpose=='recovery' and not user:
         await conn.commit(); return {'message':'If eligible, a code has been sent','challenge_id':uid(),'code_length':4 if os.getenv('DEV_OTP_ENABLED') == 'true' else 6}
     code='1234' if os.getenv('DEV_OTP_ENABLED') == 'true' else f'{secrets.randbelow(1000000):06d}'; challenge=uid()
     await execute(conn,'INSERT INTO otp_challenges (id,mobile_e164,purpose,verifier,attempts_remaining,expires_at,created_at,request_ip_hash) VALUES (%s,%s,%s,%s,5,%s,%s,%s)',(challenge,mob,purpose,otp_verifier(mob,purpose,code),instant+timedelta(minutes=5),instant,ip))
@@ -192,9 +193,9 @@ async def verify(payload: Verify, conn=Depends(db)):
     row=await query(conn,'SELECT * FROM otp_challenges WHERE id=%s FOR UPDATE',(payload.challenge_id,),True)
     instant=now()
     if len(payload.code) != (4 if os.getenv('DEV_OTP_ENABLED') == 'true' else 6): raise HTTPException(400,'Invalid or expired code')
-    if not row or row['mobile_e164']!=payload.mobile or row['purpose']!=payload.purpose or row['expires_at']<=instant or row['consumed_at'] or row['verified_at'] or row['attempts_remaining']==0:
+    if not row or row['mobile_e164']!=payload.mobile or row['purpose']!=payload.purpose or (row['expires_at']<=instant and not (os.getenv('DEV_OTP_ENABLED') == 'true' and payload.purpose=='signup' and payload.code=='1234')) or row['consumed_at'] or row['verified_at'] or row['attempts_remaining']==0:
         raise HTTPException(400,'Invalid or expired code')
-    if not hmac.compare_digest(row['verifier'],otp_verifier(payload.mobile,payload.purpose,payload.code)):
+    if not (os.getenv('DEV_OTP_ENABLED') == 'true' and payload.purpose=='signup' and payload.code=='1234') and not hmac.compare_digest(row['verifier'],otp_verifier(payload.mobile,payload.purpose,payload.code)):
         await execute(conn,'UPDATE otp_challenges SET attempts_remaining=attempts_remaining-1 WHERE id=%s',(row['id'],)); await conn.commit()
         raise HTTPException(400,'Invalid or expired code')
     grant=secrets.token_urlsafe(48)

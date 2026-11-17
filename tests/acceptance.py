@@ -18,12 +18,19 @@ async def main():
             r=await client.post('/auth/otp/request',json={'mobile':mob,'purpose':'signup'}); assert r.status_code==200,r.text
             challenge=r.json()['challenge_id']
             assert r.json()['code_length']==4 and await code()=='1234'
+            async with app.state.pool.acquire() as conn:
+                async with conn.cursor() as cur:
+                    await cur.execute('UPDATE otp_challenges SET expires_at=UTC_TIMESTAMP(6)-INTERVAL 1 SECOND WHERE id=%s',(challenge,))
+                await conn.commit()
+            assert (await client.post('/auth/otp/verify',json={'mobile':mob,'purpose':'recovery','challenge_id':challenge,'code':'1234'})).status_code==400
             assert (await client.post('/auth/otp/verify',json={'mobile':mob,'purpose':'signup','challenge_id':challenge,'code':'0000'})).status_code==400
             r=await client.post('/auth/otp/verify',json={'mobile':mob,'purpose':'signup','challenge_id':challenge,'code':await code()}); assert r.status_code==200,r.text
             grant=r.json()['grant']
             assert (await client.post('/auth/otp/verify',json={'mobile':mob,'purpose':'signup','challenge_id':challenge,'code':await code()})).status_code==400
             r=await client.post('/auth/signup',json={'mobile':mob,'grant':grant,'pin':'0001','full_name':'Student','curriculum_code':'CBSE_G5'}); assert r.status_code==200,r.text
             token=r.json()['token']; assert r.json()['expires_at'].startswith('9999'); assert r.json()['user']['mobile_e164']=='+91'+mob
+            duplicate=await client.post('/auth/otp/request',json={'mobile':mob,'purpose':'signup'})
+            assert duplicate.status_code==409 and 'already registered' in duplicate.json()['detail']
             assert (await client.post('/auth/signup',json={'mobile':mob,'grant':grant,'pin':'0001','full_name':'Student','curriculum_code':'CBSE_G5'})).status_code==400
             headers={'Authorization':'Bearer '+token}
             assert (await client.get('/auth/me',headers=headers)).status_code==200
